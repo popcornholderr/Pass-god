@@ -5,36 +5,50 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+  const email = e.target.email.value;
+  const password = e.target.password.value;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (error) return alert(error.message);
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
-    const { data: userData } = await supabase
-      .from("users_data")
-      .select("status, role")
-      .eq("id", data.user.id)
-      .single();
+  if (!data.user) {
+    alert("Login failed.");
+    return;
+  }
 
-    if (userData.status !== "approved") {
-      alert("Waiting for admin approval.");
-      await supabase.auth.signOut();
-      return;
-    }
+  const { data: userData, error: dbError } = await supabase
+    .from("users_data")
+    .select("status, role")
+    .eq("id", data.user.id)
+    .single();
 
-    if (userData.role === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/dashboard");
-    }
-  };
+  if (dbError || !userData) {
+    alert("User record not found.");
+    console.error(dbError);
+    return;
+  }
+
+  if (userData.status !== "approved") {
+    alert("Waiting for admin approval.");
+    await supabase.auth.signOut();
+    return;
+  }
+
+  if (userData.role === "admin") {
+    navigate("/admin");
+  } else {
+    navigate("/dashboard");
+  }
+};
 
   return (
     <form onSubmit={handleLogin}>
