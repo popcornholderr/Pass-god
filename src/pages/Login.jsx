@@ -14,7 +14,10 @@ export default function Login() {
       password,
     });
 
-    if (error) return alert(error.message);
+    if (error) {
+      alert(error.message);
+      return;
+    }
 
     const { data: userData } = await supabase
       .from("users_data")
@@ -28,63 +31,26 @@ export default function Login() {
       return;
     }
 
+    // 👇 redirect to your real product
     window.location.href = "/pass.html";
   };
 
-  const wrapper = {
-    minHeight: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "linear-gradient(135deg, #0f172a, #1e293b)",
-  };
-
-  const card = {
-    width: "380px",
-    padding: "40px",
-    borderRadius: "20px",
-    background: "rgba(255,255,255,0.08)",
-    backdropFilter: "blur(15px)",
-    boxShadow: "0 15px 40px rgba(0,0,0,0.5)",
-    color: "white",
-  };
-
-  const input = {
-    width: "100%",
-    padding: "12px",
-    marginBottom: "18px",
-    borderRadius: "10px",
-    border: "none",
-    outline: "none",
-    background: "rgba(255,255,255,0.15)",
-    color: "white",
-  };
-
-  const button = {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "10px",
-    border: "none",
-    background: "#3b82f6",
-    color: "white",
-    fontWeight: "bold",
-    cursor: "pointer",
-  };
-
   return (
-    <div style={wrapper}>
-      <div style={card}>
-        <h2 style={{ textAlign: "center", marginBottom: "25px" }}>Login</h2>
+    <div className="page-wrapper">
+      <div className="card">
+        <h2>Login</h2>
         <form onSubmit={handleLogin}>
-          <input style={input} name="email" placeholder="Email" required />
-          <input style={input} name="password" type="password" placeholder="Password" required />
-          <button style={button}>Login</button>
+          <div className="input-group">
+            <input name="email" placeholder="Email" required />
+          </div>
+          <div className="input-group">
+            <input name="password" type="password" placeholder="Password" required />
+          </div>
+          <button>Login</button>
         </form>
-        <p style={{ textAlign: "center", marginTop: "15px" }}>
-          <Link to="/signup" style={{ color: "#60a5fa" }}>
-            Create Account
-          </Link>
-        </p>
+        <div className="link">
+          <Link to="/signup">Create Account</Link>
+        </div>
       </div>
     </div>
   );
