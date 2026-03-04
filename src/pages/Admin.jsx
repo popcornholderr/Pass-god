@@ -26,17 +26,42 @@ export default function Admin() {
     loadUsers();
   };
 
+  const wrapper = {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #1e293b, #0f172a)",
+    padding: "40px",
+    color: "white",
+  };
+
+  const card = {
+    background: "rgba(255,255,255,0.08)",
+    padding: "20px",
+    borderRadius: "15px",
+    marginBottom: "15px",
+    backdropFilter: "blur(10px)",
+  };
+
+  const button = {
+    padding: "8px 15px",
+    borderRadius: "8px",
+    border: "none",
+    background: "#3b82f6",
+    color: "white",
+    cursor: "pointer",
+    marginTop: "10px",
+  };
+
   return (
-    <div className="admin-container">
-      <h2>Admin Panel</h2>
+    <div style={wrapper}>
+      <h2 style={{ marginBottom: "30px" }}>Admin Approval Panel</h2>
 
       {users.map((user) => (
-        <div key={user.id} className="user-card">
+        <div key={user.id} style={card}>
           <p><strong>{user.email}</strong></p>
           <p>Status: {user.status}</p>
 
           {user.status === "pending" && (
-            <button onClick={() => approve(user.id)}>
+            <button style={button} onClick={() => approve(user.id)}>
               Approve
             </button>
           )}
