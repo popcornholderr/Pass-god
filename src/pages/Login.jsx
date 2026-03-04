@@ -4,36 +4,47 @@ import { Link } from "react-router-dom";
 export default function Login() {
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+  const email = e.target.email.value;
+  const password = e.target.password.value;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
-    const { data: userData } = await supabase
-      .from("users_data")
-      .select("status")
-      .eq("id", data.user.id)
-      .single();
+  if (!data?.user) {
+    alert("User not found after login.");
+    return;
+  }
 
-    if (!userData || userData.status !== "approved") {
-      alert("Waiting for admin approval.");
-      await supabase.auth.signOut();
-      return;
-    }
+  const { data: userData, error: fetchError } = await supabase
+    .from("users_data")
+    .select("status")
+    .eq("id", data.user.id)
+    .single();
 
-    // 👇 redirect to your real product
-    window.location.href = "/pass.html";
-  };
+  if (fetchError) {
+    console.log(fetchError);
+    alert("Database error.");
+    return;
+  }
+
+  if (!userData || userData.status !== "approved") {
+    alert("Waiting for admin approval.");
+    await supabase.auth.signOut();
+    return;
+  }
+
+  window.location.href = "/pass.html";
+};
+
 
   return (
     <div className="page-wrapper">
